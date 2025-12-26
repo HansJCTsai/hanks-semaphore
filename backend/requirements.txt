@@ -11,6 +11,7 @@ asyncpg
 
 # --- Security & Auth ---
 passlib[bcrypt]
+bcrypt==4.0.1
 # 下一章做 JWT 登入時會用到，先裝起來備用
 python-jose[cryptography] 
 

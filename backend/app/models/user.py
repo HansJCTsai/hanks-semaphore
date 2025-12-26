@@ -24,5 +24,5 @@ class User(Base):
     password: Mapped[str] = mapped_column(String, nullable=False)
 
     # Premission Flags
-    admi: Mapped[bool] = mapped_column(Boolean, default=False)
+    admin: Mapped[bool] = mapped_column(Boolean, default=False)
     alert: Mapped[bool] = mapped_column(Boolean, default=False)
