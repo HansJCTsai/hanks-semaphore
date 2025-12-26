@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  app:
+    # Image 定義在這裡！
+    image: mcr.microsoft.com/devcontainers/python:3.11-bullseye
+    volumes:
+      - ..:/workspace:cached
+    # 讓容器保持執行
+    command: sleep infinity
+    links: 
+      - db
+    depends_on: 
+      - db
+
+  db:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_USER: semaphore
+      POSTGRES_PASSWORD: changeme
+      POSTGRES_DB: semaphore
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:

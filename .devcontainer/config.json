@@ -1,0 +1,9 @@
+{
+  "postgres": {
+    "host": "db",
+    "user": "semaphore",
+    "pass": "changeme",
+    "name": "semaphore",
+    "port": "5432"
+  }
+}

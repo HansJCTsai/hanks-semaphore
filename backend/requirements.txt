@@ -1,0 +1,20 @@
+# --- Web Framework Core ---
+fastapi
+uvicorn[standard]
+pydantic-settings
+python-multipart
+
+# --- Database & ORM ---
+sqlalchemy
+alembic
+asyncpg
+
+# --- Security & Auth ---
+passlib[bcrypt]
+# 下一章做 JWT 登入時會用到，先裝起來備用
+python-jose[cryptography] 
+
+# --- Utilities ---
+requests
+# 因為我们在 Schema 裡用了 EmailStr，Pydantic 需要這個套件
+email-validator

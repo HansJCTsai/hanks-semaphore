@@ -1,0 +1,21 @@
+# --- OS System Files (系統垃圾檔) ---
+.DS_Store
+Thumbs.db
+*.log
+
+# --- IDE Settings (避免上傳個人編輯器設定) ---
+.vscode/
+.idea/
+*.swp
+
+# --- Languages & Dependencies (語言與依賴) ---
+# Node.js
+node_modules/
+dist/
+.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+env/

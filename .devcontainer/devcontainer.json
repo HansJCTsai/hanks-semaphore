@@ -1,0 +1,54 @@
+{
+    "name": "hanks-semaphore Env (Python Only)",
+    
+    // 對應 docker-compose.yml
+    "dockerComposeFile": "docker-compose.yml",
+    
+    "service": "app",
+    "workspaceFolder": "/workspace",
+    
+    "features": {
+        // 前端開發需要 Node.js
+        "ghcr.io/devcontainers/features/node:1": {
+            "version": "lts"
+        }
+    },
+    
+    // 8000=FastAPI, 8080=Frontend
+    "forwardPorts": [8000, 8080],
+
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "dbaeumer.vscode-eslint",
+                "esbenp.prettier-vscode",
+                "eamodio.gitlens",
+                "mhutchie.git-graph",
+                "redhat.ansible",
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "mtxr.sqltools",
+                "mtxr.sqltools-driver-pg",
+                "charliermarsh.ruff"
+            ],
+            "settings": {
+                "python.defaultInterpreterPath": "./.venv/bin/python",
+                "ansible.python.interpreterPath": "./.venv/bin/python",
+                "[python]": {
+                    "editor.defaultFormatter": "charliermarsh.ruff",
+                    "editor.formatOnSave": true,
+                    "editor.codeActionsOnSave": {
+                        "source.fixAll": "explicit",
+                        "source.organizeImports": "explicit"
+                    }
+                }
+            }
+        }
+    },
+    
+    // 執行安裝腳本
+    "postCreateCommand": "bash .devcontainer/postCreateCommand.sh",
+    
+    // [⚠️ 關鍵修正] Python 官方映像檔的使用者名稱是 "vscode"
+    "remoteUser": "vscode"
+}
