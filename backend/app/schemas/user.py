@@ -44,4 +44,4 @@ class UserResponse(BaseModel):
     name: str
 
     # 這是 Pydantic V2 的設定，讓它可以直接讀取 SQLAlchemy 的物件
-    mode_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True)
