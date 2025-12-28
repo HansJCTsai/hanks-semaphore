@@ -14,8 +14,8 @@
         }
     },
     
-    // 8000=FastAPI, 8080=Frontend
-    "forwardPorts": [8000, 8080],
+    // 8000=FastAPI, 8080=Frontend, 5432=PostgreSQL(DB) ,6379=Redis, 5555=Celery Flower (監控)
+    "forwardPorts": [8000, 8080, 5432, 6379, 5555],
 
     "customizations": {
         "vscode": {

@@ -9,8 +9,11 @@ services:
     command: sleep infinity
     links: 
       - db
+      - redis
     depends_on: 
       - db
+      - redis
+      
     # [新增] 讓本機可以透過 localhost:8000 存取 API
     ports:
       - "8000:8000"
@@ -25,10 +28,19 @@ services:
       POSTGRES_PASSWORD: changeme
       POSTGRES_DB: semaphore
     volumes:
-      - db-data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     # [選用] 如果你想用本機的資料庫工具連進去檢查，就把這行打開
-    # ports:
-    #   - "5432:5432"
-
+    ports:
+      - "5432:5432"
+# [新增] Redis 服務，作為 Celery Broker 與 Result Backend
+  redis:
+    image: redis:7-alpine
+    restart: always
+    ports:
+      - "6379:6379"  # 開放 port 方便本機 GUI 工具連線檢查
+    volumes:
+      - redis-data:/data
 volumes:
-  db-data:
+  postgres_data:
+  redis-data:
+  
