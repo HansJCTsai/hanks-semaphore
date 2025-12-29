@@ -102,8 +102,9 @@ if [ ! -f .env ]; then
     
     # Celery 任務佇列連線 (Redis)
     # 使用 redis:6379 是因為 docker-compose 裡的 service name 叫 'redis'
-    echo "CELERY_BROKER_URL=redis://redis:6379/0" >> .env
-    echo "CELERY_RESULT_BACKEND=redis://redis:6379/0" >> .env
+    # 格式：redis://:密碼@主機:Port/DB
+    echo "CELERY_BROKER_URL=redis://:Redi$_P@ssw0rd@redis:6379/0" >> .env
+    echo "CELERY_RESULT_BACKEND=redis://:Redi$_P@ssw0rd@redis:6379/0" >> .env
     
     # 安全性密鑰 (開發用)
     echo "SECRET_KEY=dev-secret-key-change-me" >> .env

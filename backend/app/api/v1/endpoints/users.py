@@ -13,7 +13,7 @@ router = APIRouter()
 # ----------------------------------------------------------------------
 # GET /users/me - 取得當前登入者資料
 # ----------------------------------------------------------------------
-@router.get("/me", response_model=schemas.UserResponse)
+@router.get("/me", summary="取得當前登入者資料", response_model=schemas.UserResponse)
 async def read_user_me(
     # [注意] 這裡通常會依賴一個驗證函式 (get_current_user)
     # 因為我們還沒做登入，這裡先暫時註解掉或寫一個假的
