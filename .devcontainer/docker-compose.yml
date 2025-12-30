@@ -13,10 +13,13 @@ services:
     # [新增] 讓本機可以透過 localhost:8000 存取 API
     ports:
       - "8000:8000"
+      - "8080:8080"
     # [新增] 設定工作目錄，方便進去後直接在對的位置
     working_dir: /workspace
     # [建議] 這裡可以預先注入環境變數，讓 Python 知道怎麼連 Redis
     environment:
+      - DATABASE_URL=postgresql+asyncpg://semaphore:changeme@db:5432/semaphore
+      - PYTHONPATH=/workspace
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - REDIS_PASSWORD=Redi$_P@ssw0rd

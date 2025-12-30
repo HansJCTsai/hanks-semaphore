@@ -1,0 +1,10 @@
+# 強制 shell scripts 使用 LF 換行，不管在哪個作業系統
+*.sh text eol=lf
+*.bash text eol=lf
+.devcontainer/postCreateCommand.sh text eol=lf
+
+# 其他容易出問題的設定檔也建議強制 LF
+*.yml text eol=lf
+*.yaml text eol=lf
+*.json text eol=lf
+Dockerfile text eol=lf

@@ -1,9 +1,6 @@
 {
     "name": "hanks-semaphore Env (Python Only)",
-    
-    // 對應 docker-compose.yml
     "dockerComposeFile": "docker-compose.yml",
-    
     "service": "app",
     "workspaceFolder": "/workspace",
     
@@ -11,6 +8,11 @@
         // 前端開發需要 Node.js
         "ghcr.io/devcontainers/features/node:1": {
             "version": "lts"
+        },
+        "ghcr.io/devcontainers/features/common-utils:2": {
+            "installZsh": true,
+            "username": "vscode",
+            "upgradePackages": true
         }
     },
     
@@ -29,11 +31,14 @@
                 "ms-python.vscode-pylance",
                 "mtxr.sqltools",
                 "mtxr.sqltools-driver-pg",
-                "charliermarsh.ruff"
+                "charliermarsh.ruff",
+                "tamasfe.even-better-toml"
             ],
             "settings": {
                 "python.defaultInterpreterPath": "./.venv/bin/python",
                 "ansible.python.interpreterPath": "./.venv/bin/python",
+                // [關鍵] 強制容器內檔案使用 LF 換行，避免 Shell Script 在 Windows 編輯後無法執行
+                "files.eol": "\n",
                 "[python]": {
                     "editor.defaultFormatter": "charliermarsh.ruff",
                     "editor.formatOnSave": true,
@@ -50,5 +55,8 @@
     "postCreateCommand": "bash .devcontainer/postCreateCommand.sh",
     
     // [⚠️ 關鍵修正] Python 官方映像檔的使用者名稱是 "vscode"
-    "remoteUser": "vscode"
+    "remoteUser": "vscode",
+
+    // 關閉 VS Code 時停止容器，節省資源
+    "shutdownAction": "stopCompose"
 }
