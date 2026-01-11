@@ -4,7 +4,8 @@ from typing import List
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from backend.app import crud, models, schemas
+from backend.app import models, schemas
+from backend.app.crud.crud_user import daoUser_instan
 from backend.app.db.session import get_db
 
 router = APIRouter()
@@ -32,7 +33,7 @@ async def read_user_me(
     # --- [臨時版邏輯] (方便你現在測試) ---
     # 假設目前登入的是 ID 為 1 的使用者 (通常是 admin)
     mock_current_user_id = 1
-    user_me = await crud.user.get_user(db, mock_current_user_id)
+    user_me = await daoUser_instan.get_user(db=db, user_id=mock_current_user_id)
     if not user_me:
         raise HTTPException(
             status_code=404, detail="User not found (Test user ID 1 missing)"
@@ -53,7 +54,7 @@ async def read_users(
     取得使用者列表 (Retrieve users).
     """
     # 這裡的 crud.user 就是指 crud_user.py 模組
-    users = await crud.user.get_users(db, skip=skip, limit=limit)
+    users = await daoUser_instan.get_users(db=db, skip=skip, limit=limit)
     return users
 
 
@@ -68,7 +69,7 @@ async def read_user(
     """
     根據 ID 取得特定使用者 (Get user by ID).
     """
-    user = await crud.user.get_user(db, user_id)
+    user = await daoUser_instan.get_user(db=db, user_id=user_id)
     if not user:
         raise HTTPException(
             status_code=404,
@@ -89,21 +90,21 @@ async def create_user(
     """
     建立新使用者 (Create new user).
     """
-    user = await crud.user.get_user_by_username(db, username=user_in.username)
+    user = await daoUser_instan.get_user_by_username(db=db, username=user_in.username)
     if user:
         raise HTTPException(
             status_code=400,
             detail="The user with this username already exists in the system.",
         )
 
-    user = await crud.user.get_user_by_email(db, email=user_in.email)
+    user = await daoUser_instan.get_user_by_email(db=db, email=user_in.email)
     if user:
         raise HTTPException(
             status_code=400,
             detail="The user with this email already exists in the system.",
         )
 
-    user = await crud.user.create_user(db, user=user_in)
+    user = await daoUser_instan.create(db=db, obj_in=user_in)
     return user
 
 
@@ -120,14 +121,14 @@ async def update_user(
     """
     更新使用者資料 (Update a user).
     """
-    user = await crud.user.get_user(db, user_id=user_id)
+    user = await daoUser_instan.get_user(db=db, user_id=user_id)
     if not user:
         raise HTTPException(
             status_code=404,
             detail="The user with this id does not exist in the system",
         )
 
-    user = await crud.user.update_user(db, db_user=user, user_in=user_in)
+    user = await daoUser_instan.update_user(db=db, db_user=user, user_in=user_in)
     return user
 
 
@@ -143,12 +144,12 @@ async def delete_user(
     """
     刪除使用者 (Delete a user).
     """
-    user = await crud.user.get_user(db, user_id=user_id)
+    user = await daoUser_instan.get_user(db=db, user_id=user_id)
     if not user:
         raise HTTPException(
             status_code=404,
             detail="The user with this id does not exist in the system",
         )
 
-    await crud.user.delete_user(db, user_id=user_id)
+    await daoUser_instan.delete(db=db, user_id=user_id)
     return user

@@ -25,3 +25,8 @@ requests
 email-validator
 httpx
 PyYAML  # [新增] 用於讀取 config.yaml
+black
+typer # Typer and Rich are a powerful duo used to create modern, professional Command Line Interfaces (CLIs).
+rich
+shellingham # 有時候 typer 需要這個來檢測 shell
+pyfiglet

@@ -9,80 +9,93 @@ from backend.app.models.user import User
 from backend.app.schemas import UserCreate, UserUpdate
 
 
-# ==============================================================================
-# READ Operations
-# ==============================================================================
-async def get_user(db: AsyncSession, user_id: int) -> Optional[User]:
-    # [修正] 加上 await
-    result = await db.execute(select(User).where(User.id == user_id))
-    return result.scalars().first()
+class daoUser:
+    """
+    User CRUD 操作封裝
+    """
 
+    # ==============================================================================
+    # READ Operations
+    # ==============================================================================
+    # [修正] 加上 self
+    async def get_user(self, db: AsyncSession, user_id: int) -> Optional[User]:
+        result = await db.execute(select(User).where(User.id == user_id))
+        return result.scalars().first()
 
-async def get_user_by_username(db: AsyncSession, username: str) -> Optional[User]:
-    # [修正] 參數改為 username，並加上 await
-    result = await db.execute(select(User).where(User.username == username))
-    return result.scalars().first()
+    # [修正] 加上 self
+    async def get_user_by_username(
+        self, db: AsyncSession, username: str
+    ) -> Optional[User]:
+        result = await db.execute(select(User).where(User.username == username))
+        return result.scalars().first()
 
+    # [修正] 加上 self
+    async def get_user_by_email(self, db: AsyncSession, email: str) -> Optional[User]:
+        result = await db.execute(select(User).where(User.email == email))
+        return result.scalars().first()
 
-async def get_user_by_email(db: AsyncSession, email: str) -> Optional[User]:
-    # [修正] User.mail 改為 User.email，並加上 await
-    result = await db.execute(select(User).where(User.email == email))
-    return result.scalars().first()
+    # [修正] 加上 self (這就是報錯的地方！)
+    async def get_users(
+        self, db: AsyncSession, *, skip: int = 0, limit: int = 100
+    ) -> List[User]:
+        result = await db.execute(select(User).offset(skip).limit(limit))
+        return result.scalars().all()
 
+    # ==============================================================================
+    # CREATE Operations
+    # ==============================================================================
+    # [修正] 加上 self，並將參數名稱改為 obj_in 以符合通用習慣 (非強制，但建議)
+    async def create(self, db: AsyncSession, obj_in: UserCreate) -> User:
+        hashed_password = get_hashed_password(obj_in.password)
 
-# [新增] 補回 get_users 函式，因為 users.py 有用到
-async def get_users(db: AsyncSession, skip: int = 0, limit: int = 100) -> List[User]:
-    result = await db.execute(select(User).offset(skip).limit(limit))
-    return result.scalars().all()
-
-
-# ==============================================================================
-# CREATE Operations
-# ==============================================================================
-async def create_user(db: AsyncSession, user: UserCreate) -> User:
-    # [修正] 這裡要把 user.password 拿去雜湊，之前寫成 user.email 了！
-    hashed_password = get_hashed_password(user.password)
-
-    db_user = User(
-        username=user.username,
-        email=user.email,
-        name=user.name,
-        password=hashed_password,
-        admin=False,
-        alert=False,
-    )
-    db.add(db_user)
-    await db.commit()
-    await db.refresh(db_user)
-    return db_user
-
-
-# ==============================================================================
-# UPDATE Operations
-# ==============================================================================
-async def update_user(db: AsyncSession, *, db_user: User, user_in: UserUpdate) -> User:
-    update_user_data = user_in.model_dump(exclude_unset=True)
-
-    if "password" in update_user_data and update_user_data["password"]:
-        hashed_password = get_hashed_password(update_user_data["password"])
-        update_user_data["password"] = hashed_password
-
-    for field, value in update_user_data.items():
-        setattr(db_user, field, value)
-
-    db.add(db_user)
-    await db.commit()
-    await db.refresh(db_user)
-    return db_user
-
-
-# ==============================================================================
-# DELETE Operations
-# ==============================================================================
-async def delete_user(db: AsyncSession, user_id: int) -> Optional[User]:
-    # [修正] 加上 await
-    user_data = await get_user(db=db, user_id=user_id)
-    if user_data:
-        await db.delete(user_data)
+        db_user = User(
+            username=obj_in.username,
+            email=obj_in.email,
+            name=obj_in.name,
+            password=hashed_password,
+            admin=getattr(
+                obj_in, "admin", False
+            ),  # 防止 UserCreate 沒有 admin 欄位時報錯
+            alert=False,
+        )
+        db.add(db_user)
         await db.commit()
-    return user_data
+        await db.refresh(db_user)
+        return db_user
+
+    # ==============================================================================
+    # UPDATE Operations
+    # ==============================================================================
+    # [修正] 加上 self
+    async def update(
+        self, db: AsyncSession, *, db_user: User, user_in: UserUpdate
+    ) -> User:
+        update_user_data = user_in.model_dump(exclude_unset=True)
+
+        if "password" in update_user_data and update_user_data["password"]:
+            hashed_password = get_hashed_password(update_user_data["password"])
+            update_user_data["password"] = hashed_password
+
+        for field, value in update_user_data.items():
+            setattr(db_user, field, value)
+
+        db.add(db_user)
+        await db.commit()
+        await db.refresh(db_user)
+        return db_user
+
+    # ==============================================================================
+    # DELETE Operations
+    # ==============================================================================
+    # [修正] 加上 self
+    async def delete(self, db: AsyncSession, user_id: int) -> Optional[User]:
+        # 注意這裡要用 self.get_user 呼叫自己的方法
+        user_data = await self.get_user(db=db, user_id=user_id)
+        if user_data:
+            await db.delete(user_data)
+            await db.commit()
+        return user_data
+
+
+# 實例化
+daoUser_instan = daoUser()

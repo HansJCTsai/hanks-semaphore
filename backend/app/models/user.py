@@ -1,9 +1,11 @@
 from datetime import datetime
+from typing import List
 
 from sqlalchemy import Boolean, DateTime, Integer, String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from backend.app.db.base_class import Base
+from backend.app.models.project_user import ProjectUser
 
 
 class User(Base):
@@ -26,3 +28,7 @@ class User(Base):
     # Premission Flags
     admin: Mapped[bool] = mapped_column(Boolean, default=False)
     alert: Mapped[bool] = mapped_column(Boolean, default=False)
+
+    projects: Mapped[List["ProjectUser"]] = relationship(
+        "ProjectUser", back_populates="user"
+    )

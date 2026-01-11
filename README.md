@@ -1,3 +1,28 @@
+# Hanks-Semaphore (Python Backend Rewrite)
+
+![Python](https://img.shields.io/badge/Python-3.11+-blue.svg?logo=python&logoColor=white)
+![FastAPI](https://img.shields.io/badge/FastAPI-0.109+-009688.svg?logo=fastapi&logoColor=white)
+![Docker](https://img.shields.io/badge/DevContainer-Ready-2496ED.svg?logo=docker&logoColor=white)
+![License](https://img.shields.io/badge/License-MIT-green.svg)
+
+這是一個將 [Semaphore UI](https://github.com/semaphoreui/semaphore) 後端從 Go 語言遷移至 **Python (FastAPI)** 的現代化重構專案。
+本專案保留了原版強大的 Ansible/Terraform/Shell 自動化任務執行能力，並改寫為 Python 生態系架構，以提升開發效率與擴充性。
+
+## 🏗️ 架構與技術決策 (Architecture)
+
+本專案由 **小go (架構師)** 與 **小py (開發)** 共同規劃，主要技術變更如下：
+
+| 元件 | 原版 Semaphore (Go) | 新版 Hanks-Semaphore (Python) | 決策原因 |
+| :--- | :--- | :--- | :--- |
+| **Web Framework** | Gin (Go) | **FastAPI** (Python) | 原生非同步支援 (AsyncIO)、自動生成 OpenAPI 文件。 |
+| **Concurrency** | Goroutines | **Celery / ARQ** + **Redis** | Python 需要獨立的 Task Queue 來處理長時間運行的 Ansible 任務，避免阻塞 API。 |
+| **Database** | MySQL / BoltDB / Postgres | **PostgreSQL** (推薦) / MySQL | 使用 **SQLAlchemy (Async)** 作為 ORM，搭配 **Alembic** 管理遷移。 |
+| **Real-time Logs** | Websockets (Go Channels) | **Websockets** + **Redis Pub/Sub** | 支援多 Worker 擴展，讓任務日誌能跨行程推送到前端。 |
+| **Environment** | Binary / Docker | **Docker** + **DevContainers** | 統一開發與部署環境，解決 Python 依賴管理問題。 |
+
+## 📂 專案結構 (Project Structure)
+
+```text
 hanks-semaphore/
 ├── .devcontainer/        # 你現有的 Dev Container 設定
 ├── backend/
@@ -39,3 +64,4 @@ hanks-semaphore/
 │   ├── pyproject.toml        # 現代化依賴管理 (Poetry 或 setuptools)
 │   └── requirements.txt
 └── docker-compose.yml        # 需新增 Redis 與 Celery Worker 服務
+```
